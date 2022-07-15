@@ -1,140 +1,69 @@
 function love.load()
-    Object = require "classic"
 
+    Object = require "classic"
+    require "sprites"
+    require "tilemap"
     require "entity"
     require "player"
 
     player = Player(15, 11)
 
     -- Loading font
-    font = love.graphics.newFont("arcade.TTF", 14)
+    font = love.graphics.newFont("fonts/arcade.TTF", 14)
 
     -- Loading sprites
-    image = love.graphics.newImage("sprites.png")
-    local image_width = image:getWidth()
-    local image_height = image:getHeight()
+    image = love.graphics.newImage("sprites/sprites.png")
 
     -- Water sprites
-    water_img = love.graphics.newImage("water.png")
-    local w_width = water_img:getWidth()
-    local w_height = water_img:getHeight()
+    water_img = love.graphics.newImage("sprites/water.png")
 
-    width = 24
-    height = 24
+    -- Key sprites
+    key_img = love.graphics.newImage("sprites/key.png")
+    
+    -- Current level
+    level = 1
 
     -- Tilemap levels
-    level = 1
-    tilemap = {{
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 4, 4, 4},
-        {4, 5, 8, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 0, 5, 4, 4, 4},
-        {4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}},
-
-        {
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 8, 5, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 6, 5, 4, 4, 4},
-        {4, 5, 5, 5, 5, 5, 5, 5, 4, 5, 5, 5, 5, 5, 6, 5, 4, 4, 4},
-        {4, 5, 0, 6, 6, 6, 6, 5, 4, 5, 6, 6, 6, 6, 6, 5, 4, 4, 4},
-        {4, 5, 5, 5, 5, 5, 6, 5, 5, 5, 6, 5, 5, 5, 5, 5, 4, 4, 4},
-        {4, 4, 4, 4, 4, 5, 6, 6, 6, 6, 6, 5, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},},
-
-        {
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 4, 4, 4},
-        {4, 4, 5, 8, 5, 4, 4, 4, 4, 4, 4, 4, 4, 5, 0, 5, 4, 4, 4},
-        {4, 4, 5, 6, 5, 4, 4, 4, 4, 5, 5, 5, 5, 5, 6, 5, 4, 4, 4},
-        {4, 4, 5, 6, 5, 5, 5, 5, 5, 5, 6, 6, 5, 5, 6, 5, 4, 4, 4},
-        {4, 4, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 5, 4, 4, 4},
-        {4, 4, 5, 6, 6, 5, 5, 6, 6, 5, 5, 5, 5, 6, 6, 5, 4, 4, 4},
-        {4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 4, 4, 5, 5, 5, 5, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},},
-
-        {
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 4, 4},
-        {4, 5, 6, 6, 6, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 5, 4, 4},
-        {4, 5, 6, 6, 6, 5, 5, 6, 6, 6, 6, 5, 5, 6, 6, 6, 5, 4, 4},
-        {4, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 5, 5, 4, 4},
-        {4, 4, 5, 6, 5, 5, 5, 5, 6, 6, 5, 5, 5, 5, 6, 5, 4, 4, 4},
-        {4, 4, 5, 6, 5, 4, 5, 6, 6, 6, 6, 5, 4, 5, 6, 5, 4, 4, 4},
-        {4, 4, 5, 0, 5, 4, 5, 11, 6, 6, 6, 5, 4, 5, 8, 5, 4, 4, 4},
-        {4, 4, 5, 5, 5, 4, 5, 5, 5, 5, 5, 5, 4, 5, 5, 5, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},}
-    }
-
-    -- Player spawn on level
-    player_pos = {
-        {15, 11},
-        {3, 11},
-        {15, 8},
-        {4, 8}}
+    tilemap = getTilemap()
     
     -- Player max steps p/ level
-    maxSteps = {{12}, {19}, {25}, {43}}
+    maxSteps = {12, 19, 25, 43, 41, 41, 66, 82, 93, 208, 
+                132, 138, 128, 131, 227, 181, 161, 179, 172}
 
     -- Player steps
     steps = 0
 
-    -- Render the sprites
-    quads = {}
+    -- Player points
+    points = 0
 
-    for i = 0, 1 do
-        for j = 0, 9 do
-            table.insert(quads, love.graphics.newQuad(1 + j * (width + 2), 1 + i * (height + 2), width, height, image_width, image_height))
-        end
-    end
+    -- Render tiles sprites
+    quads = renderSprites("tiles", image, 24, 24)
 
-    -- Render water frames
-    water = {}
+    -- Render water sprites
+    water = renderSprites("water", water_img, 24, 24)
 
-    for i = 0, 3 do
+    -- Render key sprites
+    key = renderSprites("key", key_img, 24, 24)
 
-        for j = 0, 9 do
-            table.insert(water, love.graphics.newQuad(1 + j * (width + 2), 1 + i * (height + 2), width, height, w_width, w_height))
-        end
-    end
+    -- Animation frames
+    waterFrame = 1
+    keyframe = 1
 
-    currentFrame = 1
-
+    haveKey = true
 end
 
 function love.update(dt)
 
     -- Water animation
-    currentFrame = currentFrame + 10 * dt
-    if currentFrame >= 40 then
-        currentFrame = 1
+    waterFrame = waterFrame + 10 * dt
+    if waterFrame >= 40 then
+        waterFrame = 1
+    end
+
+    -- Key animation
+    keyframe = keyframe + 10 * dt
+    if keyframe >= 16 then
+        keyframe = 1
     end
 
 end
@@ -156,17 +85,21 @@ function love.draw()
     love.graphics.print("LEVEL " .. level, 36, 6)
 
     -- Tiles
-    love.graphics.print(steps .. "/" .. maxSteps[level][1], 216, 6)
+    love.graphics.print(steps .. "/" .. maxSteps[level], 216, 6)
 
     -- Solved levels
     love.graphics.print("SOLVED " .. level - 1, 336, 6)
 
     -- Points
-    love.graphics.print("POINTS ", 336, 390)
+    love.graphics.print("POINTS " .. points, 312, 390)
 
     -- Set color to default
     love.graphics.setColor(255, 255, 255)
 
+
+    -- Tiles width and height
+    local width = 24
+    local height = 24
 
     -- For each line on table
     for i, row in ipairs(tilemap[level]) do
@@ -174,25 +107,29 @@ function love.draw()
         -- For each line item
         for j, tile in ipairs(row) do
 
-            if tile == 11 then
+            if tile == 12 then
 
-                -- If hasMoney == true, 11 become a money tile
+                -- If hasMoney == true, 12 become a money tile
                 if hasMoney == true then
                     tilemap[level][i][j] = 3
 
-                -- If hasMoney == false, 11 become a snow tile
+                -- If hasMoney == false, 12 become a snow tile
                 else
                     tilemap[level][i][j] = 6
                 end
             end
+            
+            -- Draw key
+            if tile == 13 then
+                love.graphics.draw(key_img, key[math.floor(keyframe)], (j - 1) * width, (i - 0) * height)
 
-            -- Draw sprite if tile != 0
-            if tile ~= 0 then
+            -- Draw tiles
+            elseif tile ~= 0 then
                 love.graphics.draw(image, quads[tile], (j - 1) * width, (i - 0) * height)
 
-            -- Draw water if tile == 0
+            -- Draw water
             else
-                love.graphics.draw(water_img, water[math.floor(currentFrame)], (j - 1) * width, (i - 0) * height)
+                love.graphics.draw(water_img, water[math.floor(waterFrame)], (j - 1) * width, (i - 0) * height)
             end
 
         end
@@ -201,8 +138,6 @@ function love.draw()
     -- Draw player
     love.graphics.draw(player.image, (player.tile_x - 1) * width, (player.tile_y - 0) * height)
     
-
-
 end
 
 function love.keypressed(key)
@@ -223,33 +158,43 @@ function love.keypressed(key)
 
     if isEmpty(x, y) then
 
-        -- If player moves to snow or to money
-        if tilemap[level][y][x] == 6 or tilemap[level][y][x] == 3 then
-            tilemap[level][y][x] = 0
-            steps = steps + 1
+        points = points + 1
+        steps = steps + 1
 
-        -- If player moves to Carpet
+        -- If player moves to snow
+        if tilemap[level][y][x] == 6 then
+            tilemap[level][y][x] = 0
+
+        -- If player moves to money
+        elseif tilemap[level][y][x] == 3 then
+            tilemap[level][y][x] = 0
+            points = points + 100
+        
+        -- If player moves to carpet
         elseif tilemap[level][y][x] == 9 then
             tilemap[level][y][x] = 6
-            steps = steps + 1
+
+        elseif tilemap[level][y][x] == 11 then
+            tilemap[level][y][x] = 0
         end
         
+        -- Update player position
         player.tile_x = x
         player.tile_y = y
 
         -- If player moves to Warp
         if tilemap[level][y][x] == 8 then
-
-            steps = steps + 1
+            
+            -- Points per level
+            points = points + (level * 14) + 10
 
             -- Check if have money on the next level
             hasMoney = checkSteps()
 
             -- Player go to next level
             level = level + 1
-            player.tile_x = player_pos[level][1]
-            player.tile_y = player_pos[level][2]
-
+            
+            -- Reset steps counter
             steps = 0
 
         end
@@ -257,19 +202,22 @@ function love.keypressed(key)
 end
 
 function isEmpty(x, y)
-    return
-    -- Money 
-    tilemap[level][y][x] == 3 or
-    -- Snow 
-    tilemap[level][y][x] == 6 or 
-    -- Warp
-    tilemap[level][y][x] == 8 or
-    -- Carpet
-    tilemap[level][y][x] == 9
+
+    -- If tile is money, snow, warp or carpet
+    if tilemap[level][y][x] == 3 or tilemap[level][y][x] == 6 or
+       tilemap[level][y][x] == 8 or tilemap[level][y][x] == 9 then
+        return true
+
+    -- If tile is lock
+    elseif tilemap[level][y][x] == 11 and haveKey == true then
+        haveKey = false
+        return true
+    end
+
 end
 
 function checkSteps()
-    if steps == maxSteps[level][1] then
+    if steps == maxSteps[level] then
         return true
     else
         return false
