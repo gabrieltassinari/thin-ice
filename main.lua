@@ -49,7 +49,7 @@ function love.load()
     waterFrame = 1
     keyframe = 1
 
-    haveKey = true
+    haveKey = false
 end
 
 function love.update(dt)
@@ -174,7 +174,12 @@ function love.keypressed(key)
         elseif tilemap[level][y][x] == 9 then
             tilemap[level][y][x] = 6
 
+        -- If player moves to lock
         elseif tilemap[level][y][x] == 11 then
+            tilemap[level][y][x] = 0
+
+        -- If player moves to key
+        elseif tilemap[level][y][x] == 13 then
             tilemap[level][y][x] = 0
         end
         
@@ -207,10 +212,14 @@ function isEmpty(x, y)
     if tilemap[level][y][x] == 3 or tilemap[level][y][x] == 6 or
        tilemap[level][y][x] == 8 or tilemap[level][y][x] == 9 then
         return true
-
+    
     -- If tile is lock
     elseif tilemap[level][y][x] == 11 and haveKey == true then
-        haveKey = false
+        return true
+    
+    -- If tile is key
+    elseif tilemap[level][y][x] == 13 then
+        haveKey = true
         return true
     end
 
