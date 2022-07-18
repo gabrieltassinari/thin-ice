@@ -3,7 +3,6 @@ function love.load()
     Object = require "classic"
     require "sprites"
     require "tilemap"
-    require "entity"
     require "player"
 
     player = Player(15, 11)
@@ -11,15 +10,27 @@ function love.load()
     -- Loading font
     font = love.graphics.newFont("fonts/arcade.TTF", 14)
 
-    -- Loading sprites
+    -- Render tiles sprites
     image = love.graphics.newImage("sprites/sprites.png")
+    quads = renderSprites("tiles", image)
 
-    -- Water sprites
+    -- Render player sprites
+    puffle_img = love.graphics.newImage("sprites/player.png")
+    puffle = renderSprites("player", puffle_img)
+
+    -- Render water sprites
     water_img = love.graphics.newImage("sprites/water.png")
+    water = renderSprites("water", water_img)
 
-    -- Key sprites
+    -- Render key sprites
     key_img = love.graphics.newImage("sprites/key.png")
+    key = renderSprites("key", key_img)
     
+    -- Animation frames
+    playerFrame = 1
+    waterFrame = 1
+    keyFrame = 1
+
     -- Current level
     level = 1
 
@@ -36,22 +47,15 @@ function love.load()
     -- Player points
     points = 0
 
-    -- Render tiles sprites
-    quads = renderSprites("tiles", image, 24, 24)
-
-    -- Render water sprites
-    water = renderSprites("water", water_img, 24, 24)
-
-    -- Render key sprites
-    key = renderSprites("key", key_img, 24, 24)
-
-    -- Animation frames
-    waterFrame = 1
-    keyframe = 1
-
 end
 
 function love.update(dt)
+
+    -- Player animation
+    playerFrame = playerFrame + 10 * dt
+    if playerFrame >= 32 then
+        playerFrame = 6
+    end
 
     -- Water animation
     waterFrame = waterFrame + 10 * dt
@@ -60,9 +64,9 @@ function love.update(dt)
     end
 
     -- Key animation
-    keyframe = keyframe + 10 * dt
-    if keyframe >= 16 then
-        keyframe = 1
+    keyFrame = keyFrame + 10 * dt
+    if keyFrame >= 16 then
+        keyFrame = 1
     end
 
 end
@@ -105,43 +109,48 @@ function love.draw()
         -- For each line on table
         for i, row in ipairs(tilemap[level]) do
 
-        -- For each line item
-        for j, tile in ipairs(row) do
+            -- For each line item
+            for j, tile in ipairs(row) do
 
-            if tile == 12 then
+                if tile == 12 then
 
-                -- If hasMoney == true, 12 become a money tile
-                if hasMoney == true then
-                    tilemap[level][i][j] = 3
+                    -- If hasMoney == true, 12 become a money tile
+                    if hasMoney == true then
+                        tilemap[level][i][j] = 3
 
-                -- If hasMoney == false, 12 become a snow tile
-                else
-                    tilemap[level][i][j] = 6
+                    -- If hasMoney == false, 12 become a snow tile
+                    else
+                        tilemap[level][i][j] = 6
+                    end
                 end
+                
+                -- Draw key
+                if tile == 13 then
+                    love.graphics.draw(key_img, key[math.floor(keyFrame)], (j - 1) * width, (i - 0) * height)
+
+                -- Draw tiles
+                elseif tile ~= 0 then
+                    love.graphics.draw(image, quads[tile], (j - 1) * width, (i - 0) * height)
+
+                -- Draw water
+                else
+                    love.graphics.draw(water_img, water[math.floor(waterFrame)], (j - 1) * width, (i - 0) * height)
+                end
+
             end
-            
-            -- Draw key
-            if tile == 13 then
-                love.graphics.draw(key_img, key[math.floor(keyframe)], (j - 1) * width, (i - 0) * height)
-
-            -- Draw tiles
-            elseif tile ~= 0 then
-                love.graphics.draw(image, quads[tile], (j - 1) * width, (i - 0) * height)
-
-            -- Draw water
-            else
-                love.graphics.draw(water_img, water[math.floor(waterFrame)], (j - 1) * width, (i - 0) * height)
-            end
-
         end
-        
+    
         -- Draw player
         player:draw()
+
+    -- Final screen
     else
-        -- LOAD FINAL SCREEN
+        love.graphics.draw(love.graphics.newImage("sprites/final.png"))
     end
 end
 
 function love.keypressed(key)
-    player:keyPressed(key)
+    if level <= 12 then
+        player:keyPressed(key)
+    end
 end
