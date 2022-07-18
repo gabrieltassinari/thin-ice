@@ -1,34 +1,34 @@
 function love.load()
 
-    Object = require "classic"
-    require "sprites"
-    require "tilemap"
-    require "player"
+    Object = require "src/classic"
+    require "src/sprites"
+    require "src/tilemap"
+    require "src/player"
 
     player = Player(15, 11)
 
     -- Loading font
-    font = love.graphics.newFont("fonts/arcade.TTF", 14)
+    font = love.graphics.newFont("src/fonts/arcade.TTF", 14)
 
     -- Background music
-    song = love.audio.newSource("src/song.ogg", "stream")
+    song = love.audio.newSource("src/music/song.ogg", "stream")
     song:setLooping(true)
     song:play()
 
     -- Render tiles sprites
-    image = love.graphics.newImage("src/sprites.png")
+    image = love.graphics.newImage("src/images/sprites.png")
     quads = renderSprites("tiles", image)
 
     -- Render player sprites
-    puffle_img = love.graphics.newImage("src/player.png")
+    puffle_img = love.graphics.newImage("src/images/player.png")
     puffle = renderSprites("player", puffle_img)
 
     -- Render water sprites
-    water_img = love.graphics.newImage("src/water.png")
+    water_img = love.graphics.newImage("src/images/water.png")
     water = renderSprites("water", water_img)
 
     -- Render key sprites
-    key_img = love.graphics.newImage("src/key.png")
+    key_img = love.graphics.newImage("src/images/key.png")
     key = renderSprites("key", key_img)
     
     -- Animation frames
@@ -150,7 +150,7 @@ function love.draw()
 
     -- Final screen
     else
-        love.graphics.draw(love.graphics.newImage("src/final.png"))
+        love.graphics.draw(love.graphics.newImage("src/images/final.png"))
     end
 end
 
