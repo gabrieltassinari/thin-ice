@@ -10,20 +10,25 @@ function love.load()
     -- Loading font
     font = love.graphics.newFont("fonts/arcade.TTF", 14)
 
+    -- Background music
+    song = love.audio.newSource("src/song.ogg", "stream")
+    song:setLooping(true)
+    song:play()
+
     -- Render tiles sprites
-    image = love.graphics.newImage("sprites/sprites.png")
+    image = love.graphics.newImage("src/sprites.png")
     quads = renderSprites("tiles", image)
 
     -- Render player sprites
-    puffle_img = love.graphics.newImage("sprites/player.png")
+    puffle_img = love.graphics.newImage("src/player.png")
     puffle = renderSprites("player", puffle_img)
 
     -- Render water sprites
-    water_img = love.graphics.newImage("sprites/water.png")
+    water_img = love.graphics.newImage("src/water.png")
     water = renderSprites("water", water_img)
 
     -- Render key sprites
-    key_img = love.graphics.newImage("sprites/key.png")
+    key_img = love.graphics.newImage("src/key.png")
     key = renderSprites("key", key_img)
     
     -- Animation frames
@@ -145,7 +150,7 @@ function love.draw()
 
     -- Final screen
     else
-        love.graphics.draw(love.graphics.newImage("sprites/final.png"))
+        love.graphics.draw(love.graphics.newImage("src/final.png"))
     end
 end
 
