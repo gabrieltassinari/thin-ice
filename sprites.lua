@@ -1,12 +1,12 @@
-function renderSprites(sprite, image, width, height)
+function renderSprites(sprite, image)
 
     local image = image
 
     local image_width = image:getWidth()
     local image_height = image:getHeight()
     
-    local width = width
-    local height = height
+    local width = 24
+    local height = 24
     
     if sprite == "water" then
 
@@ -48,6 +48,23 @@ function renderSprites(sprite, image, width, height)
         end
 
         return key
-            
+
+    elseif sprite == "player" then
+
+        puffle = {}
+
+        local maxFrames = 32
+
+        for i = 0, 3 do
+            for j = 0, 7 do
+                table.insert(puffle, love.graphics.newQuad(1 + j * (width + 2), 1 + i * (height + 2), width, height, image_width, image_height))
+                if #puffle == maxFrames then
+                    break
+                end
+            end
+        end
+
+        return puffle
+
     end
 end

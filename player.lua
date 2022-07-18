@@ -1,14 +1,14 @@
-Player = Entity:extend()
+Player = Object:extend()
 
 function Player:new(x, y)
-    Player.super.new(self, x, y, "sprites/player.png")
+    Player.super.new(self, x, y)
     self.tile_x = x
     self.tile_y = y
     self.haveKey = false
 end
 
 function Player:draw()
-    love.graphics.draw(player.image, (player.tile_x - 1) * 24, player.tile_y * 24)
+    love.graphics.draw(puffle_img, puffle[math.floor(playerFrame)], (player.tile_x - 1) * 24, player.tile_y * 24)
 end
 
 function Player:keyPressed(key)
@@ -62,10 +62,6 @@ function Player:keyPressed(key)
         -- If player moves to Warp
         if tilemap[level][y][x] == 8 then
             
-            -- Save current position
-            position_x = x
-            position_y = y
-
             -- Points per level
             points = points + (level * 14) + 10
 
@@ -75,6 +71,9 @@ function Player:keyPressed(key)
             -- Player go to next level
             level = level + 1
             
+            -- Reset key
+            player.haveKey = false
+
             -- Reset steps counter
             steps = 0
 
